@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   ArrowRight, BarChart3, Brain, Check, ClipboardCheck, Clock3, Coins,
   FileClock, Flame, Megaphone, Menu, MessageSquareText, Network, Play,
@@ -157,8 +157,8 @@ function Index() {
             <a className="transition-colors hover:text-primary" href="#faq">FAQ</a>
           </div>
           <div className="hidden items-center gap-3 md:flex">
-            <Button asChild variant="command"><a href="#demo"><Play />Xem demo</a></Button>
-            <Button asChild variant="flame"><a href="#pricing">Mở bản LIVE</a></Button>
+            <Button asChild variant="command"><Link to="/demo"><Play />Xem demo</Link></Button>
+            <Button asChild variant="flame"><Link to="/signup">Mở bản LIVE</Link></Button>
           </div>
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-label="Mở menu">
             {menuOpen ? <X /> : <Menu />}
@@ -181,8 +181,8 @@ function Index() {
             Một trụ sở duy nhất để đặt mục tiêu, giao việc, duyệt kết quả và lưu lại cách công ty bạn vận hành.
           </p>
           <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-            <Button asChild size="lg" variant="flame" className="h-12 px-7 text-base"><a href="#pricing">Dùng thử 10 việc đầu <ArrowRight /></a></Button>
-            <Button asChild size="lg" variant="command" className="h-12 px-7 text-base"><a href="#demo"><Play /> Xem một ngày điều hành</a></Button>
+            <Button asChild size="lg" variant="flame" className="h-12 px-7 text-base"><Link to="/signup">Dùng thử 10 việc đầu <ArrowRight /></Link></Button>
+            <Button asChild size="lg" variant="command" className="h-12 px-7 text-base"><Link to="/demo"><Play /> Xem một ngày điều hành</Link></Button>
           </div>
 
           <div id="demo" className="shadow-console mx-auto mt-16 max-w-5xl overflow-hidden rounded-lg border border-border bg-card text-left">
@@ -274,7 +274,7 @@ function Index() {
         <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[.65fr_1.35fr]"><div><p className="text-xs font-bold uppercase text-flame">Cần biết trước khi mở</p><h2 className="mt-4 font-display text-4xl font-bold">Câu hỏi thường gặp.</h2></div><div className="divide-y divide-background/15 border-y border-background/15">{faqs.map(([q,a]) => <details key={q} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display font-semibold">{q}<Sparkles className="size-4 text-primary transition-transform group-open:rotate-45"/></summary><p className="pt-4 text-sm leading-6 text-background/65">{a}</p></details>)}</div></div>
       </section>
 
-      <footer className="border-t border-border px-5 py-16 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end"><div className="max-w-xl"><div className="font-display text-3xl font-bold">Sẵn sàng để công ty tự vận hành gọn hơn?</div><p className="mt-4 text-muted-foreground">Bắt đầu bằng 10 việc mô phỏng. Chỉ mở bản LIVE khi bạn thấy đúng cách mình muốn làm việc.</p><div className="mt-7 flex gap-3"><Button asChild variant="flame"><a href="#pricing">Bắt đầu ngay <ArrowRight/></a></Button><Button asChild variant="command"><a href="#demo"><Play/>Xem demo</a></Button></div></div><div className="text-sm text-muted-foreground"><div className="font-display text-lg font-bold text-foreground">TAG OPC</div><p className="mt-2">Hệ điều hành AI cho công ty tinh gọn.</p></div></div><div className="mx-auto mt-14 flex max-w-7xl flex-col justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row"><span>© 2026 TAG OPC</span><span className="font-mono uppercase text-primary">Command center: online</span></div></footer>
+      <footer className="border-t border-border px-5 py-16 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end"><div className="max-w-xl"><div className="font-display text-3xl font-bold">Sẵn sàng để công ty tự vận hành gọn hơn?</div><p className="mt-4 text-muted-foreground">Bắt đầu bằng 10 việc mô phỏng. Chỉ mở bản LIVE khi bạn thấy đúng cách mình muốn làm việc.</p><div className="mt-7 flex gap-3"><Button asChild variant="flame"><Link to="/signup">Bắt đầu ngay <ArrowRight/></Link></Button><Button asChild variant="command"><Link to="/demo"><Play/>Xem demo</Link></Button></div></div><div className="text-sm text-muted-foreground"><div className="font-display text-lg font-bold text-foreground">TAG OPC</div><p className="mt-2">Hệ điều hành AI cho công ty tinh gọn.</p></div></div><div className="mx-auto mt-14 flex max-w-7xl flex-col justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row"><span>© 2026 TAG OPC</span><span className="font-mono uppercase text-primary">Command center: online</span></div></footer>
       <SurveyModal />
     </main>
   );
