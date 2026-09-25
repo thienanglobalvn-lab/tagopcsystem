@@ -116,14 +116,14 @@ function SurveyModal() {
                 {surveyQuestions.map((_, i) => <span key={i} className={`h-1 w-8 rounded-full ${i < step ? "bg-primary" : i === step ? "bg-flame" : "bg-muted"}`} />)}
               </div>
             </div>
-            <h2 className="mt-6 font-display text-2xl font-bold leading-snug">{surveyQuestions[step].label}</h2>
-            <label className="sr-only" htmlFor="survey-input">{surveyQuestions[step].label}</label>
+            <h2 className="mt-6 font-display text-2xl font-bold leading-snug">{q.label}</h2>
+            <label className="sr-only" htmlFor="survey-input">{q.label}</label>
             <input
               id="survey-input"
               autoFocus
               value={draft}
               maxLength={300}
-              placeholder={surveyQuestions[step].placeholder}
+              placeholder={q.placeholder}
               onChange={(e) => { setDraft(e.target.value); setError(""); }}
               onKeyDown={(e) => { if (e.key === "Enter") submitStep(); }}
               className={`mt-6 w-full rounded-md border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-flame ${error ? "border-flame" : "border-border"}`}
