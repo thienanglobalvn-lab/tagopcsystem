@@ -4,7 +4,7 @@ import {
   FileClock, Flame, Megaphone, Menu, MessageSquareText, Network, Play,
   ShieldCheck, Sparkles, Users, X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -80,7 +80,8 @@ function SurveyModal() {
     const value = draft.trim();
     if (!value) { setError("Vui lòng điền câu trả lời trước khi tiếp tục."); return; }
     setError("");
-    const next = { ...answers, [surveyQuestions[step].id]: value.slice(0, 300) };
+    const q = surveyQuestions[step]!;
+    const next = { ...answers, [q.id]: value.slice(0, 300) };
     setAnswers(next);
     setDraft("");
     if (step < surveyQuestions.length - 1) {
@@ -92,6 +93,8 @@ function SurveyModal() {
   };
 
   if (!open) return null;
+
+  const q = surveyQuestions[step]!;
 
   return (
     <div className="fixed inset-0 z-[70] grid place-items-center bg-background/80 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Khảo sát khách hàng">
