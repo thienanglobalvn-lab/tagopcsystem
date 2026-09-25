@@ -38,6 +38,105 @@ const faqs = [
   ["Dữ liệu công ty có bị mất không?", "Bộ não, sổ tay và dữ liệu làm việc được tổ chức để bạn chủ động sao lưu và mang theo khi cần."],
 ];
 
+const surveyQuestions = [
+  { id: "field", label: "Bạn đang kinh doanh lĩnh vực gì?", placeholder: "Ví dụ: F&B, giáo dục, bất động sản, dịch vụ..." },
+  { id: "audience", label: "Đối tượng khách hàng của bạn là ai?", placeholder: "Ví dụ: chủ shop online từ 25–40 tuổi..." },
+  { id: "product", label: "Sản phẩm cốt lõi của bạn là gì?", placeholder: "Ví dụ: phần mềm quản lý bán hàng..." },
+];
+
+function SurveyModal() {
+  const [open, setOpen] = useState(false);
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [draft, setDraft] = useState("");
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let timer: number | undefined;
+    try {
+      if (!window.sessionStorage.getItem("tag-opc-survey-done")) {
+        timer = window.setTimeout(() => setOpen(true), 1000);
+      }
+    } catch {
+      timer = window.setTimeout(() => setOpen(true), 1000);
+    }
+    return () => { if (timer) window.clearTimeout(timer); };
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const closeSurvey = () => {
+    setOpen(false);
+    try { window.sessionStorage.setItem("tag-opc-survey-done", "1"); } catch { /* private mode */ }
+  };
+
+  const submitStep = () => {
+    const value = draft.trim();
+    if (!value) { setError("Vui lòng điền câu trả lời trước khi tiếp tục."); return; }
+    setError("");
+    const next = { ...answers, [surveyQuestions[step].id]: value.slice(0, 300) };
+    setAnswers(next);
+    setDraft("");
+    if (step < surveyQuestions.length - 1) {
+      setStep(step + 1);
+    } else {
+      try { window.localStorage.setItem("tag-opc-survey", JSON.stringify(next)); } catch { /* private mode */ }
+      setDone(true);
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[70] grid place-items-center bg-background/80 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Khảo sát khách hàng">
+      <div className="shadow-console relative w-full max-w-lg rounded-lg border border-border bg-card p-7 sm:p-9">
+        <button onClick={closeSurvey} aria-label="Đóng khảo sát" className="absolute right-4 top-4 grid size-8 place-items-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"><X /></button>
+
+        {done ? (
+          <div className="py-4 text-center">
+            <span className="signal-pulse mx-auto mb-5 grid size-12 place-items-center rounded-full bg-primary/15 text-primary"><Check className="size-6" /></span>
+            <h2 className="font-display text-2xl font-bold">Cảm ơn bạn!</h2>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">Câu trả lời của bạn đã được ghi nhận. TAG OPC sẽ dùng chúng để thiết lập trụ sở AI đúng với doanh nghiệp của bạn.</p>
+            <Button variant="flame" className="mt-7 w-full" onClick={closeSurvey}>Khám phá TAG OPC <ArrowRight /></Button>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] uppercase tracking-widest text-primary">Khảo sát nhanh · 0{step + 1}/03</span>
+              <div className="flex gap-1.5">
+                {surveyQuestions.map((_, i) => <span key={i} className={`h-1 w-8 rounded-full ${i < step ? "bg-primary" : i === step ? "bg-flame" : "bg-muted"}`} />)}
+              </div>
+            </div>
+            <h2 className="mt-6 font-display text-2xl font-bold leading-snug">{surveyQuestions[step].label}</h2>
+            <label className="sr-only" htmlFor="survey-input">{surveyQuestions[step].label}</label>
+            <input
+              id="survey-input"
+              autoFocus
+              value={draft}
+              maxLength={300}
+              placeholder={surveyQuestions[step].placeholder}
+              onChange={(e) => { setDraft(e.target.value); setError(""); }}
+              onKeyDown={(e) => { if (e.key === "Enter") submitStep(); }}
+              className={`mt-6 w-full rounded-md border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-flame ${error ? "border-flame" : "border-border"}`}
+            />
+            {error && <p className="mt-2 text-xs text-flame">{error}</p>}
+            <div className="mt-6 flex items-center justify-between gap-3">
+              <button onClick={closeSurvey} className="text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline">Bỏ qua khảo sát</button>
+              <Button variant="flame" onClick={submitStep}>{step === surveyQuestions.length - 1 ? "Hoàn tất" : "Tiếp tục"} <ArrowRight /></Button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
@@ -173,6 +272,7 @@ function Index() {
       </section>
 
       <footer className="border-t border-border px-5 py-16 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end"><div className="max-w-xl"><div className="font-display text-3xl font-bold">Sẵn sàng để công ty tự vận hành gọn hơn?</div><p className="mt-4 text-muted-foreground">Bắt đầu bằng 10 việc mô phỏng. Chỉ mở bản LIVE khi bạn thấy đúng cách mình muốn làm việc.</p><div className="mt-7 flex gap-3"><Button asChild variant="flame"><a href="#pricing">Bắt đầu ngay <ArrowRight/></a></Button><Button asChild variant="command"><a href="#demo"><Play/>Xem demo</a></Button></div></div><div className="text-sm text-muted-foreground"><div className="font-display text-lg font-bold text-foreground">TAG OPC</div><p className="mt-2">Hệ điều hành AI cho công ty tinh gọn.</p></div></div><div className="mx-auto mt-14 flex max-w-7xl flex-col justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row"><span>© 2026 TAG OPC</span><span className="font-mono uppercase text-primary">Command center: online</span></div></footer>
+      <SurveyModal />
     </main>
   );
 }
